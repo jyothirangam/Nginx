@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CinemaGo | Book Tickets</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b0f1c 0%, #1a1f2f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Main booking card */
+    .booking-container {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(22, 28, 45, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 42px;
+      padding: 30px 35px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    h1 i {
+      background: #f5c542;
+      background: linear-gradient(135deg, #f5c542, #f09b22);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2rem;
+    }
+
+    .subhead {
+      color: #9aa4b8;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subhead i {
+      color: #f5c542;
+    }
+
+    /* movie selection row */
+    .movie-row {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .movie-card {
+      flex: 1;
+      min-width: 150px;
+      background: #1e253a;
+      border-radius: 24px;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 2px solid transparent;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .movie-card i {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      color: #7f8ea3;
+      transition: 0.2s;
+    }
+
+    .movie-card h3 {
+      color: #eef2f9;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .movie-card p {
+      color: #8a98b0;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 10px;
+      border-radius: 40px;
+      display: inline-block;
+    }
+
+    .movie-card.selected {
+      border-color: #f5c542;
+      background: #232d48;
+      transform: translateY(-5px);
+      box-shadow: 0 18px 28px -8px rgba(245, 197, 66, 0.3);
+    }
+
+    .movie-card.selected i {
+      color: #f5c542;
+    }
+
+    /* date & time section */
+    .datetime-row {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .date-picker, .time-picker {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #b7c1d4;
+      font-weight: 500;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .section-label i {
+      color: #f5c542;
+      font-size: 1.1rem;
+    }
+
+    .date-options, .time-options {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .date-btn, .time-btn {
+      background: #1e253a;
+      border: none;
+      color: #cdd8eb;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 70px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .date-btn span, .time-btn span {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .date-btn:hover, .time-btn:hover {
+      background: #2b354f;
+      transform: scale(1.02);
+    }
+
+    .date-btn.active, .time-btn.active {
+      background: #f5c542;
+      color: #0e1322;
+      font-weight: 600;
+      box-shadow: 0 12px 18px -6px #f5c542;
+    }
+
+    .date-btn.active span, .time-btn.active span {
+      color: #1a1f2f;
+      opacity: 0.9;
+    }
+
+    /* screen & seats */
+    .screen-area {
+      margin: 15px 0 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen {
+      width: 80%;
+      height: 38px;
+      background: linear-gradient(to bottom, #b9c7dd, #6d7c9a);
+      border-radius: 0 0 40px 40px;
+      box-shadow: 0 18px 30px -10px #00000080, 0 0 0 1px #ffffff1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #141b2b;
+      font-weight: 700;
+      letter-spacing: 6px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .seats-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      justify-content: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .seat {
+      background: #1e253a;
+      aspect-ratio: 1 / 0.9;
+      border-radius: 10px 10px 6px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #a5b3cc;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .seat:hover {
+      background: #2f3b5c;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .seat.selected {
+      background: #f5c542;
+      color: #0a0f1c;
+      font-weight: 700;
+      box-shadow: 0 0 14px #f5c542cc;
+      border-color: #ffd966;
+    }
+
+    .seat.occupied {
+      background: #2e2e3e;
+      color: #555a6b;
+      cursor: not-allowed;
+      opacity: 0.5;
+      box-shadow: none;
+      pointer-events: none;
+      text-decoration: line-through;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0 20px;
+      color: #a3aec3;
+      font-size: 0.85rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: #1e253a;
+      border: 1px solid #ffffff1a;
+    }
+
+    .legend-box.selected {
+      background: #f5c542;
+    }
+
+    .legend-box.occupied {
+      background: #2e2e3e;
+    }
+
+    /* booking summary */
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #111725;
+      padding: 18px 28px;
+      border-radius: 60px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+      gap: 18px;
+      border: 1px solid #ffffff0d;
+    }
+
+    .summary-info {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      color: #95a3bb;
+      font-size: 0.85rem;
+    }
+
+    .summary-item strong {
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 4px;
+      letter-spacing: -0.2px;
+    }
+
+    .summary-item strong i {
+      color: #f5c542;
+      margin-right: 6px;
+    }
+
+    .book-btn {
+      background: #f5c542;
+      border: none;
+      color: #0e1322;
+      padding: 14px 34px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 10px 20px -5px #f5c54280;
+      letter-spacing: 0.3px;
+    }
+
+    .book-btn:hover {
+      background: #ffd966;
+      transform: scale(1.02);
+      box-shadow: 0 16px 26px -5px #f5c542;
+    }
+
+    .book-btn:active {
+      transform: scale(0.98);
+    }
+
+    .book-btn i {
+      font-size: 1.2rem;
+    }
+
+    /* toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e253a;
+      color: #fff;
+      padding: 16px 28px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 25px 40px -10px #000000cc;
+      border-left: 5px solid #f5c542;
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.3s;
+      pointer-events: none;
+      z-index: 999;
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+      background: rgba(30, 37, 58, 0.95);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast i {
+      color: #f5c542;
+      font-size: 1.4rem;
+    }
+
+    /* responsive */
+    @media (max-width: 700px) {
+      .booking-container {
+        padding: 22px 18px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .seats-grid {
+        gap: 5px;
+      }
+      .seat {
+        font-size: 0.6rem;
+      }
+      .summary {
+        justify-content: center;
+        text-align: center;
+      }
+      .book-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .seat {
+        font-size: 0.5rem;
+        border-radius: 6px;
+      }
+      .legend {
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="booking-container">
+    <!-- Header -->
+    <h1>
+      <i class="fas fa-film"></i> CinemaGo
+    </h1>
+    <div class="subhead">
+      <i class="fas fa-ticket-alt"></i> Pick your movie, showtime & seats
+    </div>
+
+    <!-- Movie selection -->
+    <div class="movie-row" id="movieRow">
+      <div class="movie-card selected" data-movie="Dune: Part Two" data-price="12">
+        <i class="fas fa-meteor"></i>
+        <h3>Dune: Part Two</h3>
+        <p>Sci-Fi · 2h 46m</p>
+      </div>
+      <div class="movie-card" data-movie="Oppenheimer" data-price="12">
+        <i class="fas fa-atom"></i>
+        <h3>Oppenheimer</h3>
+        <p>Biography · 3h</p>
+      </div>
+      <div class="movie-card" data-movie="The Batman" data-price="10">
+        <i class="fas fa-mask"></i>
+        <h3>The Batman</h3>
+        <p>Action · 2h 56m</p>
+      </div>
+    </div>
+
+    <!-- Date and time -->
+    <div class="datetime-row">
+      <div class="date-picker">
+        <div class="section-label"><i class="fas fa-calendar-alt"></i> Select date</div>
+        <div class="date-options" id="dateOptions">
+          <button class="date-btn active" data-date="Today">Today <span>Oct 12</span></button>
+          <button class="date-btn" data-date="Tomorrow">Tomorrow <span>Oct 13</span></button>
+          <button class="date-btn" data-date="Sunday">Sunday <span>Oct 14</span></button>
+        </div>
+      </div>
+      <div class="time-picker">
+        <div class="section-label"><i class="fas fa-clock"></i> Showtime</div>
+        <div class="time-options" id="timeOptions">
+          <button class="time-btn active" data-time="14:30">14:30 <span>PM</span></button>
+          <button class="time-btn" data-time="18:00">18:00 <span>PM</span></button>
+          <button class="time-btn" data-time="21:15">21:15 <span>PM</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen & seats -->
+    <div class="screen-area">
+      <div class="screen">SCREEN</div>
+      <div class="seats-grid" id="seatsGrid">
+        <!-- seats generated by js -->
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-box"></div> Available</div>
+      <div class="legend-item"><div class="legend-box selected"></div> Selected</div>
+      <div class="legend-item"><div class="legend-box occupied"></div> Occupied</div>
+    </div>
+
+    <!-- Booking summary -->
+    <div class="summary">
+      <div class="summary-info">
+        <div class="summary-item">
+          <span><i class="fas fa-chair"></i> Seats</span>
+          <strong id="seatCount">0</strong>
+        </div>
+        <div class="summary-item">
+          <span><i class="fas fa-tag"></i> Total</span>
+          <strong><i class="fas fa-dollar-sign"></i><span id="totalPrice">0</span></strong>
+        </div>
+        <div class="summary-item">
+          <span><i class="fas fa-clock"></i> Show</span>
+          <strong id="selectedShow">Today 14:30</strong>
+        </div>
+      </div>
+      <button class="book-btn" id="bookBtn"><i class="fas fa-check-circle"></i> Book now</button>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Booking confirmed!</span>
+  </div>
+
+  <script>
+    (function(){
+      // ---------- STATE ----------
+      let currentMovie = { name: 'Dune: Part Two', price: 12 };
+      let selectedDate = 'Today';
+      let selectedTime = '14:30';
+      let selectedSeats = new Set();   // store seat numbers as strings (e.g., "A1")
+      
+      // DOM elements
+      const movieCards = document.querySelectorAll('.movie-card');
+      const dateBtns = document.querySelectorAll('.date-btn');
+      const timeBtns = document.querySelectorAll('.time-btn');
+      const seatsGrid = document.getElementById('seatsGrid');
+      const seatCountSpan = document.getElementById('seatCount');
+      const totalPriceSpan = document.getElementById('totalPrice');
+      const selectedShowSpan = document.getElementById('selectedShow');
+      const bookBtn = document.getElementById('bookBtn');
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+
+      // ---------- CONSTANTS ----------
+      const ROWS = ['A', 'B', 'C', 'D', 'E', 'F'];
+      const SEATS_PER_ROW = 10;
+      
+      // Pre-occupied seats (random but fixed for demo)
+      const OCCUPIED_SEATS = new Set([
+        'A3', 'A4', 'A5', 'B7', 'B8', 'C2', 'C9', 'D1', 'D10', 'E4', 'E5', 'F6', 'F7', 'F8'
+      ]);
+
+      // ---------- SEAT GENERATION ----------
+      function generateSeats() {
+        seatsGrid.innerHTML = '';
+        ROWS.forEach(row => {
+          for (let i = 1; i <= SEATS_PER_ROW; i++) {
+            const seatId = `${row}${i}`;
+            const seatDiv = document.createElement('div');
+            seatDiv.className = 'seat';
+            if (OCCUPIED_SEATS.has(seatId)) {
+              seatDiv.classList.add('occupied');
+            } else {
+              seatDiv.classList.add('available');
+            }
+            seatDiv.dataset.seat = seatId;
+            seatDiv.textContent = seatId;
+            // if already selected (e.g., after reset, but we keep set)
+            if (selectedSeats.has(seatId)) {
+              seatDiv.classList.add('selected');
+            }
+            seatDiv.addEventListener('click', () => toggleSeat(seatId, seatDiv));
+            seatsGrid.appendChild(seatDiv);
+          }
+        });
+      }
+
+      // ---------- TOGGLE SEAT SELECTION ----------
+      function toggleSeat(seatId, seatElement) {
+        if (seatElement.classList.contains('occupied')) return;
+        
+        if (selectedSeats.has(seatId)) {
+          selectedSeats.delete(seatId);
+          seatElement.classList.remove('selected');
+        } else {
+          selectedSeats.add(seatId);
+          seatElement.classList.add('selected');
+        }
+        updateSummary();
+      }
+
+      // ---------- UPDATE SUMMARY (count, total price, show time) ----------
+      function updateSummary() {
+        const count = selectedSeats.size;
+        seatCountSpan.textContent = count;
+        const total = count * currentMovie.price;
+        totalPriceSpan.textContent = total;
+        
+        // Format date + time display (short)
+        let dateDisplay = selectedDate;
+        if (selectedDate === 'Today') dateDisplay = 'Today';
+        else if (selectedDate === 'Tomorrow') dateDisplay = 'Tomorrow';
+        else dateDisplay = 'Sunday';
+        selectedShowSpan.textContent = `${dateDisplay} ${selectedTime}`;
+      }
+
+      // ---------- RESET SEATS (clear all selections) ----------
+      function clearSelectedSeats() {
+        selectedSeats.clear();
+        document.querySelectorAll('.seat.selected').forEach(seat => {
+          seat.classList.remove('selected');
+        });
+        updateSummary();
+      }
+
+      // ---------- UPDATE MOVIE PRICE & NAME ----------
+      function setMovie(movieName, price) {
+        currentMovie = { name: movieName, price: price };
+        updateSummary();
+      }
+
+      // ---------- HANDLE MOVIE CARD CLICK ----------
+      movieCards.forEach(card => {
+        card.addEventListener('click', () => {
+          movieCards.forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          const movie = card.dataset.movie;
+          const price = parseFloat(card.dataset.price);
+          setMovie(movie, price);
+        });
+      });
+
+      // ---------- HANDLE DATE BUTTONS ----------
+      dateBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          dateBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedDate = btn.dataset.date;
+          updateSummary();
+        });
+      });
+
+      // ---------- HANDLE TIME BUTTONS ----------
+      timeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          timeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedTime = btn.dataset.time;
+          updateSummary();
+        });
+      });
+
+      // ---------- BOOK BUTTON ----------
+      bookBtn.addEventListener('click', () => {
+        if (selectedSeats.size === 0) {
+          showToast('Please select at least one seat.', 'fa-exclamation-circle');
+          return;
+        }
+        
+        const seatList = Array.from(selectedSeats).join(', ');
+        const total = selectedSeats.size * currentMovie.price;
+        const movieName = currentMovie.name;
+        const showTime = `${selectedDate} ${selectedTime}`;
+        
+        // Show confirmation toast
+        showToast(`✅ ${selectedSeats.size} seat(s) booked for "${movieName}" (${showTime}) — $${total}`, 'fa-check-circle');
+        
+        // Clear selections after booking (simulate)
+        clearSelectedSeats();
+      });
+
+      // ---------- TOAST ----------
+      let toastTimer;
+      function showToast(message, iconClass = 'fa-check-circle') {
+        toastMsg.textContent = message;
+        const icon = toast.querySelector('i');
+        icon.className = `fas ${iconClass}`;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3200);
+      }
+
+      // ---------- INITIAL SETUP ----------
+      function init() {
+        generateSeats();
+        // set default movie from the pre-selected card (Dune)
+        const defaultCard = document.querySelector('.movie-card.selected');
+        if (defaultCard) {
+          currentMovie = {
+            name: defaultCard.dataset.movie,
+            price: parseFloat(defaultCard.dataset.price)
+          };
+        }
+        // set default date/time (already active in HTML, but ensure state)
+        selectedDate = 'Today';
+        selectedTime = '14:30';
+        updateSummary();
+      }
+
+      init();
+
+      // also reset seats when movie changes? No need, keep seats selected (but price updates)
+      // But if user books, we clear seats. Good.
+
+      // Edge: If user clicks a seat that's already selected, toggle. Works.
+      // Additional: For better UX, clicking on a seat already selected unselects.
+
+      // Ensure that if occupied seat is clicked, nothing happens (handled)
+    })();
+  </script>
+</body>
+</html>
